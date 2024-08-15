@@ -37,9 +37,21 @@ class IgnoreCommand(private val storage: IgnoreStorage) : CommandExecutor, TabCo
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>): List<String> {
-        if (args.size == 2) {
-            return sender.server.onlinePlayers.map { it.name }.filter { it.startsWith(args[1], true) }
+        if (sender !is Player) return emptyList()
+
+        if (args.size == 1) {
+            return listOf("add", "remove").filter { it.startsWith(args[0], true) }
         }
+
+        if (args.size == 2) {
+            return when (args[0].toLowerCase()) {
+                "add" -> sender.server.onlinePlayers.map { it.name }.filter { it.startsWith(args[1], true) }
+                "remove" -> sender.server.onlinePlayers.filter { storage.isIgnored(sender.uniqueId, it.uniqueId) }
+                        .map { it.name }.filter { it.startsWith(args[1], true) }
+                else -> emptyList()
+            }
+        }
+
         return emptyList()
     }
 }
