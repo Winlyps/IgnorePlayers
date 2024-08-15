@@ -1,13 +1,12 @@
 //3.File: ChatListener.kt
 package winlyps.ignore.listeners
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import winlyps.ignore.storage.IgnoreStorage
 
-class ChatListener(private val storage: IgnoreStorage, private val audiences: BukkitAudiences) : Listener {
+class ChatListener(private val storage: IgnoreStorage) : Listener {
 
     @EventHandler
     fun onPlayerChat(event: AsyncPlayerChatEvent) {

@@ -1,17 +1,15 @@
 //4.File: CommandPreprocessListener.kt
 package winlyps.ignore.listeners
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerCommandPreprocessEvent
 import winlyps.ignore.storage.IgnoreStorage
 
-class CommandPreprocessListener(private val storage: IgnoreStorage, private val audiences: BukkitAudiences) : Listener {
+class CommandPreprocessListener(private val storage: IgnoreStorage) : Listener {
 
     private val messagingCommands = setOf("/msg", "/tell", "/whisper", "/m", "/t", "/w")
-    private val miniMessage = MiniMessage.miniMessage()
 
     @EventHandler
     fun onPlayerCommandPreprocess(event: PlayerCommandPreprocessEvent) {
@@ -27,12 +25,12 @@ class CommandPreprocessListener(private val storage: IgnoreStorage, private val 
             val recipient = sender.server.getPlayer(recipientName)
 
             if (recipient == null) {
-                sender.sendMessage("Player not found or not online.")
+                sender.sendMessage("${ChatColor.RED}Player not found or not online.")
                 return
             }
 
             if (storage.isIgnored(recipient.uniqueId, sender.uniqueId)) {
-                audiences.player(sender).sendMessage(miniMessage.deserialize("<red>You are ignored by ${recipient.name} and cannot send messages to them.</red>"))
+                sender.sendMessage("${ChatColor.RED}You are ignored by ${recipient.name} and cannot send messages to them.")
                 event.isCancelled = true
             }
         }

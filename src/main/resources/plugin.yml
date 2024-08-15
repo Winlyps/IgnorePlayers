@@ -1,7 +1,7 @@
 name: Ignore
 version: '1.0-SNAPSHOT'
 main: winlyps.ignore.Ignore
-api-version: '1.20'
+api-version: '1.16'
 commands:
   ignore:
     description: Manage your ignore list
