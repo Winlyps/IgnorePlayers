@@ -17,22 +17,43 @@ class IgnoreCommand(private val storage: IgnoreStorage, private val audiences: B
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) return false
 
-        if (args.size < 2) return false
-
-        val target = sender.server.getPlayer(args[1])
-        if (target == null) {
-            audiences.sender(sender).sendMessage(miniMessage.deserialize("<red>Player not found or not online.</red>"))
-            return true
-        }
+        if (args.isEmpty()) return false
 
         when (args[0].toLowerCase()) {
             "add" -> {
+                if (args.size < 2) return false
+                val target = sender.server.getPlayer(args[1])
+                if (target == null) {
+                    audiences.sender(sender).sendMessage(miniMessage.deserialize("<red>Player not found or not online.</red>"))
+                    return true
+                }
                 storage.addIgnore(sender.uniqueId, target.uniqueId)
                 audiences.sender(sender).sendMessage(miniMessage.deserialize("<green>${target.name} has been added to your ignore list.</green>"))
             }
             "remove" -> {
-                storage.removeIgnore(sender.uniqueId, target.uniqueId)
-                audiences.sender(sender).sendMessage(miniMessage.deserialize("<green>${target.name} has been removed from your ignore list.</green>"))
+                if (args.size < 2) return false
+                val target = sender.server.getPlayer(args[1])
+                if (target == null) {
+                    val offlineTarget = sender.server.getOfflinePlayer(args[1])
+                    if (offlineTarget.uniqueId !in storage.getIgnoredPlayers(sender.uniqueId)) {
+                        audiences.sender(sender).sendMessage(miniMessage.deserialize("<red>Player not found in your ignore list.</red>"))
+                        return true
+                    }
+                    storage.removeIgnore(sender.uniqueId, offlineTarget.uniqueId)
+                    audiences.sender(sender).sendMessage(miniMessage.deserialize("<green>${offlineTarget.name ?: "Unknown"} has been removed from your ignore list.</green>"))
+                } else {
+                    storage.removeIgnore(sender.uniqueId, target.uniqueId)
+                    audiences.sender(sender).sendMessage(miniMessage.deserialize("<green>${target.name} has been removed from your ignore list.</green>"))
+                }
+            }
+            "list" -> {
+                val ignoredPlayers = storage.getIgnoredPlayerNames(sender.uniqueId)
+                if (ignoredPlayers.isEmpty()) {
+                    audiences.sender(sender).sendMessage(miniMessage.deserialize("<yellow>Your ignore list is empty.</yellow>"))
+                } else {
+                    val ignoredList = ignoredPlayers.joinToString(", ")
+                    audiences.sender(sender).sendMessage(miniMessage.deserialize("<yellow>Ignored players: $ignoredList</yellow>"))
+                }
             }
             else -> return false
         }
@@ -44,7 +65,7 @@ class IgnoreCommand(private val storage: IgnoreStorage, private val audiences: B
         if (sender !is Player) return emptyList()
 
         if (args.size == 1) {
-            return listOf("add", "remove").filter { it.startsWith(args[0], true) }
+            return listOf("add", "remove", "list").filter { it.startsWith(args[0], true) }
         }
 
         if (args.size == 2) {

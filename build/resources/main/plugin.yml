@@ -5,4 +5,4 @@ api-version: '1.20'
 commands:
   ignore:
     description: Manage your ignore list
-    usage: /ignore <add|remove> <nickname>
+    usage: /ignore <add|remove|list> <nickname>

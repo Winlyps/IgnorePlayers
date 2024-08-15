@@ -37,6 +37,12 @@ class IgnoreStorage(private val plugin: JavaPlugin) {
         return ignoreList[player] ?: emptySet()
     }
 
+    fun getIgnoredPlayerNames(player: UUID): List<String> {
+        return ignoreList[player]?.map { uuid ->
+            plugin.server.getOfflinePlayer(uuid).name ?: "Unknown"
+        } ?: emptyList()
+    }
+
     private fun load() {
         if (!file.exists()) {
             save() // Create the file if it doesn't exist
