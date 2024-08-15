@@ -33,6 +33,10 @@ class IgnoreStorage(private val plugin: JavaPlugin) {
         return ignoreList[player]?.contains(target) ?: false
     }
 
+    fun getIgnoredPlayers(player: UUID): Set<UUID> {
+        return ignoreList[player] ?: emptySet()
+    }
+
     private fun load() {
         if (!file.exists()) {
             save() // Create the file if it doesn't exist
