@@ -25,7 +25,7 @@ class CommandPreprocessListener(private val storage: IgnoreStorage) : Listener {
             val recipient = sender.server.getPlayer(recipientName)
 
             if (recipient == null) {
-                sender.sendMessage("${ChatColor.RED}Player not found or not online.")
+                sender.sendMessage("${ChatColor.RED}Player not found or not online or just ignores you.")
                 event.isCancelled = true
                 return
             }
