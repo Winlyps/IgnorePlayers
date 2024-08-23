@@ -9,7 +9,7 @@ import winlyps.ignore.storage.IgnoreStorage
 
 class CommandPreprocessListener(private val storage: IgnoreStorage) : Listener {
 
-    private val messagingCommands = setOf("/msg", "/tell", "/whisper", "/m", "/t", "/w")
+    private val messagingCommands = setOf("/msg", "/tell", "/whisper", "/m", "/t", "/w", "/r")
 
     @EventHandler
     fun onPlayerCommandPreprocess(event: PlayerCommandPreprocessEvent) {
