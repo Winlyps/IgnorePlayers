@@ -9,9 +9,11 @@ import winlyps.ignore.storage.IgnoreStorage
 
 class Ignore : JavaPlugin() {
 
+    lateinit var storage: IgnoreStorage
+
     override fun onEnable() {
         // Initialize storage
-        val storage = IgnoreStorage(this)
+        storage = IgnoreStorage(this)
 
         // Register command
         getCommand("ignore")?.setExecutor(IgnoreCommand(storage))
@@ -19,5 +21,9 @@ class Ignore : JavaPlugin() {
         // Register event listener
         server.pluginManager.registerEvents(ChatListener(storage), this)
         server.pluginManager.registerEvents(CommandPreprocessListener(storage), this)
+    }
+
+    override fun onDisable() {
+        storage.close()
     }
 }

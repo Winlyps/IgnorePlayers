@@ -14,7 +14,7 @@ class CommandPreprocessListener(private val storage: IgnoreStorage) : Listener {
     @EventHandler
     fun onPlayerCommandPreprocess(event: PlayerCommandPreprocessEvent) {
         val command = event.message.split(" ")
-        if (command.size < 3) return
+        if (command.size < 2) return
 
         val sender = event.player
         val commandPrefix = command[0].toLowerCase()
@@ -32,6 +32,27 @@ class CommandPreprocessListener(private val storage: IgnoreStorage) : Listener {
             if (storage.isIgnored(recipient.uniqueId, sender.uniqueId)) {
                 sender.sendMessage("${ChatColor.RED}You are ignored by ${recipient.name} and cannot send messages to them.")
                 event.isCancelled = true
+            } else {
+                storage.setLastSender(recipient.uniqueId, sender.uniqueId)
+            }
+        } else if (commandPrefix == "/r" && command.size >= 2) {
+            val lastSender = storage.getLastSender(sender.uniqueId)
+            if (lastSender == null) {
+                sender.sendMessage("${ChatColor.RED}You have no one to reply to.")
+                event.isCancelled = true
+            } else {
+                val recipient = sender.server.getPlayer(lastSender)
+                if (recipient == null) {
+                    sender.sendMessage("${ChatColor.RED}The player you are trying to reply to is not online.")
+                    event.isCancelled = true
+                } else {
+                    if (storage.isIgnored(recipient.uniqueId, sender.uniqueId)) {
+                        sender.sendMessage("${ChatColor.RED}You are ignored by ${recipient.name} and cannot send messages to them.")
+                        event.isCancelled = true
+                    } else {
+                        storage.setLastSender(recipient.uniqueId, sender.uniqueId)
+                    }
+                }
             }
         }
     }
