@@ -2,7 +2,13 @@ name: Ignore
 version: '1.0-SNAPSHOT'
 main: winlyps.ignore.Ignore
 api-version: '1.16'
+author: [Winlyps]
 commands:
   ignore:
     description: Manage your ignore list
     usage: /ignore <add|remove|list> <nickname>
+    permission: winlyps.ignore.command
+permissions:
+  winlyps.ignore.command:
+    description: Allows usage of the /ignore command
+    default: op
