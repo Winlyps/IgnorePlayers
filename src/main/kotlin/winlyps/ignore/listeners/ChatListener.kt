@@ -1,4 +1,3 @@
-//3.File: ChatListener.kt
 package winlyps.ignore.listeners
 
 import org.bukkit.event.EventHandler
@@ -11,15 +10,15 @@ class ChatListener(private val storage: IgnoreStorage) : Listener {
     @EventHandler
     fun onPlayerChat(event: AsyncPlayerChatEvent) {
         val sender = event.player
-        val recipients = event.recipients.toMutableSet()
 
-        for (recipient in recipients) {
+        // Build a list of recipients to remove FIRST, then remove them outside the loop
+        val toRemove = mutableListOf<org.bukkit.entity.Player>()
+        for (recipient in event.recipients) {
             if (storage.isIgnored(recipient.uniqueId, sender.uniqueId)) {
-                recipients.remove(recipient)
+                toRemove.add(recipient)
             }
         }
 
-        event.recipients.clear()
-        event.recipients.addAll(recipients)
+        event.recipients.removeAll(toRemove)
     }
 }
